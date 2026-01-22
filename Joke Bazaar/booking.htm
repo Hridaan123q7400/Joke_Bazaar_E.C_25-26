@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JokeBazaar - Booking</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        
+        .navbar {
+            background: #1a1a2e;
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 { color: #667eea; margin-bottom: 1.5rem; }
+        
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            color: #667eea;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .calendar {
+            width: 100%;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .calendar-header button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .calendar-header button:hover { background: #764ba2; }
+        
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+            padding: 0.3rem;
+            font-size: 0.85rem;
+        }
+        
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.3rem;
+        }
+        
+        .day {
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+            border: 2px solid #e0e0e0;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .day:hover { background: #667eea; color: white; border-color: #667eea; }
+        .day.selected { background: #667eea; color: white; font-weight: 600; }
+        
+        .time-slot {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .time-btn {
+            padding: 0.6rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .time-btn:hover { border-color: #667eea; background: #f0f0ff; }
+        .time-btn.selected { background: #667eea; color: white; border-color: #667eea; }
+        
+        .packages-section { display: flex; flex-direction: column; gap: 0.8rem; }
+        
+        .package-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .package-card:hover { border-color: #667eea; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2); }
+        .package-card.selected { border-color: #667eea; background: #f0f0ff; }
+        
+        .package-name { font-size: 1rem; font-weight: 600; color: #333; margin-bottom: 0.3rem; }
+        .package-price { color: #667eea; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        
+        .package-features {
+            list-style: none;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .package-features li {
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .designer-wrapper {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        
+        .canvas-and-tools {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .canvas-area {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .canvas-container {
+            border: 3px dashed #667eea;
+            border-radius: 8px;
+            background: white;
+            padding: 1rem;
+            position: relative;
+            cursor: crosshair;
+            min-height: 400px;
+        }
+        
+        #designCanvas {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            background: white;
+            cursor: move;
+        }
+        
+        .canvas-info {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .tools-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .tool-section {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid #f0f0f0;
+        }
+        
+        .tool-section h4 {
+            color: #667eea;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        input[type="text"],
+        input[type="color"],
+        input[type="file"],
+        input[type="number"],
+        input[type="range"],
+        textarea,
+        select {
+            padding: 0.6rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        
+        input[type="range"] {
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-secondary:hover { background: #d0d0d0; }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .button-group button { flex: 1; }
+        
+        .summary {
+            background: #f0f0ff;
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin-top: 1.5rem;
+        }
+        
+        .summary h3 { color: #667eea; margin-bottom: 1rem; }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding-top: 0.5rem;
+        }
+        
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .text-layer-item {
+            background: #f9f9f9;
+            padding: 0.6rem;
+            margin-bottom: 0.4rem;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .text-layer-item.selected {
+            border-color: #667eea;
+            background: #f0f0ff;
+            font-weight: 600;
+        }
+        
+        .text-layer-item button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .color-preset {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        
+        .color-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .color-btn:hover { transform: scale(1.1); border-color: #333; }
+        
+        .scroll-y { max-height: 200px; overflow-y: auto; padding-right: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.htm">← Back to JokeBazaar</a>
+        <span id="venueName" style="font-size: 1.1rem;">Loading venue...</span>
+    </div>
+
+    <div class="container">
+        <h1>📅 Complete Your Booking & Design Poster</h1>
+        <div class="success-message" id="successMsg">✅ Booking confirmed! Email sent. Check your inbox!</div>
+        
+        <div class="booking-grid">
+            <!-- LEFT SIDE: Date, Time, Package -->
+            <div>
+                <div class="section-title">📅 Select Date & Time</div>
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <button onclick="previousMonth()">← Prev</button>
+                        <span id="monthYear" style="font-weight: 700;"></span>
+                        <button onclick="nextMonth()">Next →</button>
+                    </div>
+                    <div class="weekdays">
+                        <div class="weekday">Sun</div>
+                        <div class="weekday">Mon</div>
+                        <div class="weekday">Tue</div>
+                        <div class="weekday">Wed</div>
+                        <div class="weekday">Thu</div>
+                        <div class="weekday">Fri</div>
+                        <div class="weekday">Sat</div>
+                    </div>
+                    <div class="days" id="calendarDays"></div>
+                </div>
+                
+                <div style="margin-top: 1.5rem;">
+                    <label style="font-weight: 600; color: #333; display: block; margin-bottom: 0.8rem;">⏰ Select Time</label>
+                    <div class="time-slot">
+                        <button class="time-btn" onclick="selectTime(this, '10:00 AM')">10 AM</button>
+                        <button class="time-btn" onclick="selectTime(this, '02:00 PM')">2 PM</button>
+                        <button class="time-btn" onclick="selectTime(this, '06:00 PM')">6 PM</button>
+                        <button class="time-btn" onclick="selectTime(this, '08:00 PM')">8 PM</button>
+                        <button class="time-btn" onclick="selectTime(this, '09:30 PM')">9:30 PM</button>
+                        <button class="time-btn" onclick="selectTime(this, '11:00 PM')">11 PM</button>
+                    </div>
+                    <div style="margin-top: 0.8rem; display: flex; gap: 0.5rem; align-items: center;">
+                        <span style="color: #666; font-size: 0.9rem;">Or enter custom time:</span>
+                        <input type="time" id="customTime" style="padding: 0.5rem; border: 2px solid #ddd; border-radius: 5px; font-size: 0.9rem;">
+                        <button class="btn btn-secondary" onclick="setCustomTime()" style="margin-top: 0; padding: 0.5rem 1rem;">Set</button>
+                    </div>
+                    <div id="selectedTimeDisplay" style="margin-top: 0.5rem; color: #667eea; font-weight: 600; font-size: 0.95rem;"></div>
+                </div>
+                
+                <div style="margin-top: 1.5rem;">
+                    <div class="section-title">📦 Select Package</div>
+                    <div class="packages-section" id="packagesContainer"></div>
+                </div>
+            </div>
+            
+            <!-- RIGHT SIDE: Designer like Canva -->
+            <div>
+                <div class="section-title">🎨 Design Your Poster</div>
+                <div class="designer-wrapper">
+                    <div class="canvas-and-tools">
+                        <!-- Canvas -->
+                        <div class="canvas-area">
+                            <!-- Canvas Size Selection -->
+                            <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                <span style="color: #667eea; font-weight: 600; font-size: 0.9rem;">Canvas Size:</span>
+                                <button class="btn btn-secondary" onclick="setCanvasSize('4:3')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">4:3</button>
+                                <button class="btn btn-secondary" onclick="setCanvasSize('1:1')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">1:1</button>
+                                <button class="btn btn-secondary" onclick="setCanvasSize('16:9')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">16:9</button>
+                                <input type="number" id="customWidth" placeholder="Width" style="padding: 0.4rem; border: 2px solid #ddd; border-radius: 5px; width: 70px; font-size: 0.85rem;">
+                                <span style="color: #999;">×</span>
+                                <input type="number" id="customHeight" placeholder="Height" style="padding: 0.4rem; border: 2px solid #ddd; border-radius: 5px; width: 70px; font-size: 0.85rem;">
+                                <button class="btn btn-secondary" onclick="setCustomCanvasSize()" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Apply</button>
+                            </div>
+                            
+                            <div class="canvas-container">
+                                <canvas id="designCanvas"></canvas>
+                            </div>
+                            <div class="canvas-info">📌 Click text on canvas to edit. Drag to move.</div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" onclick="downloadDesign()" style="margin-top: 0;">⬇️ Download Design</button>
+                                <button class="btn btn-secondary" onclick="undoDesign()" style="margin-top: 0;">↶ Undo</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Tools -->
+                        <div class="tools-panel">
+                            <!-- Background -->
+                            <div class="tool-section">
+                                <h4>🎨 Background</h4>
+                                <div class="form-group">
+                                    <label>Color</label>
+                                    <input type="color" id="bgColor" value="#667eea" oninput="updateDesign()">
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary" style="flex: 1;" onclick="setPresetBg('#667eea')">Purple</button>
+                                    <button class="btn btn-secondary" style="flex: 1;" onclick="setPresetBg('#ff6b6b')">Red</button>
+                                    <button class="btn btn-secondary" style="flex: 1;" onclick="setPresetBg('#1a1a2e')">Dark</button>
+                                </div>
+                                <div class="form-group" style="margin-top: 0.5rem;">
+                                    <label>Background Image</label>
+                                    <input type="file" id="bgImage" accept="image/*" onchange="handleImageUpload()">
+                                </div>
+                            </div>
+                            
+                            <!-- Text Layers -->
+                            <div class="tool-section">
+                                <h4>📝 Text Layers</h4>
+                                <div class="scroll-y" id="textLayersContainer"></div>
+                                <button class="btn btn-secondary" onclick="addTextLayer()">+ Add Text</button>
+                            </div>
+                            
+                            <!-- Text Editor -->
+                            <div class="tool-section" id="textControlsPanel" style="display: none;">
+                                <h4>✏️ Edit Text</h4>
+                                <div class="form-group">
+                                    <label>Content</label>
+                                    <textarea id="textInput" placeholder="Enter text..." oninput="updateDesign()"></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Font (Size: <span id="sizeValue">36</span>px)</label>
+                                    <select id="fontFamily" onchange="updateDesign()">
+                                        <option value="Arial">Arial</option>
+                                        <option value="Georgia">Georgia</option>
+                                        <option value="Comic Sans MS">Comic Sans</option>
+                                        <option value="Impact">Impact</option>
+                                        <option value="Courier New">Courier</option>
+                                        <option value="Verdana">Verdana</option>
+                                        <option value="Times New Roman">Times</option>
+                                    </select>
+                                    <input type="range" id="fontSize" min="8" max="80" value="36" oninput="updateFontSize(this.value)">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Text Color</label>
+                                    <input type="color" id="textColor" value="#FFFFFF" oninput="updateDesign()">
+                                    <div class="color-preset">
+                                        <div class="color-btn" style="background: #FFFFFF; border: 3px solid #333;" onclick="setTextColor('#FFFFFF')"></div>
+                                        <div class="color-btn" style="background: #000000;" onclick="setTextColor('#000000')"></div>
+                                        <div class="color-btn" style="background: #ff6b6b;" onclick="setTextColor('#ff6b6b')"></div>
+                                        <div class="color-btn" style="background: #ffd43b;" onclick="setTextColor('#ffd43b')"></div>
+                                        <div class="color-btn" style="background: #51cf66;" onclick="setTextColor('#51cf66')"></div>
+                                        <div class="color-btn" style="background: #74c0fc;" onclick="setTextColor('#74c0fc')"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Style</label>
+                                    <select id="fontWeight" onchange="updateDesign()">
+                                        <option value="normal">Normal</option>
+                                        <option value="bold" selected>Bold</option>
+                                        <option value="900">Heavy</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Align</label>
+                                    <div style="display: flex; gap: 0.4rem;">
+                                        <button class="btn btn-secondary" style="flex: 1; padding: 0.5rem;" onclick="setTextAlign('left')">Left</button>
+                                        <button class="btn btn-secondary" style="flex: 1; padding: 0.5rem;" onclick="setTextAlign('center')">Center</button>
+                                        <button class="btn btn-secondary" style="flex: 1; padding: 0.5rem;" onclick="setTextAlign('right')">Right</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Shadow (Blur: <span id="shadowValue">5</span>px)</label>
+                                    <input type="range" id="shadowBlur" min="0" max="20" value="5" oninput="updateShadow(this.value)">
+                                </div>
+                                
+                                <button class="btn btn-secondary" style="background: #ff6b6b; color: white;" onclick="removeCurrentTextLayer()">🗑️ Delete Layer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Booking Summary -->
+        <div class="summary">
+            <h3>📋 Booking Summary</h3>
+            <div class="summary-item">
+                <span>Venue:</span>
+                <span id="summaryVenue">-</span>
+            </div>
+            <div class="summary-item">
+                <span>Date:</span>
+                <span id="summaryDate">Select a date</span>
+            </div>
+            <div class="summary-item">
+                <span>Time:</span>
+                <span id="summaryTime">Select a time</span>
+            </div>
+            <div class="summary-item">
+                <span>Package:</span>
+                <span id="summaryPackage">Select a package</span>
+            </div>
+            <div class="summary-item">
+                <span>Total Cost:</span>
+                <span id="summaryPrice">₹0</span>
+            </div>
+        </div>
+        
+        <!-- Buttons -->
+        <div class="button-group">
+            <a href="index.htm" style="text-decoration: none;"><button class="btn btn-secondary">Cancel</button></a>
+            <button class="btn btn-primary" onclick="confirmBooking()">✅ Confirm Booking</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedDate = null;
+        let selectedTime = null;
+        let selectedPackage = null;
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let bgImage = null;
+        let textLayers = [];
+        let currentLayerIndex = 0;
+        let selectedVenueName = '';
+        let isDragging = false;
+        let dragLayerIndex = -1;
+        let history = [];
+        let canvasWidth = 800;
+        let canvasHeight = 600;
+        
+        const packages = [
+            { _id: "p1", name: "Starter Stage", price: 50000, features: ["Standard setup", "Basic sound", "Microphone", "100-200 seats"] },
+            { _id: "p2", name: "Spotlight Stage", price: 20000, features: ["Premium setup", "Advanced sound", "2 microphones", "300-500 seats"] },
+            { _id: "p3", name: "Grand Stage", price: 200000, features: ["VIP setup", "Concert sound", "4 microphones", "800+ seats"] }
+        ];
+        
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            selectedVenueName = params.get('venueName') || 'Select Venue';
+            document.getElementById('venueName').textContent = selectedVenueName;
+            document.getElementById('summaryVenue').textContent = selectedVenueName;
+            
+            renderCalendar();
+            renderPackages();
+            // Don't add default text layer - let user decide
+            resizeCanvas();
+            updateDesign();
+            
+            window.addEventListener('resize', resizeCanvas);
+        }
+        
+        function resizeCanvas() {
+            const canvas = document.getElementById('designCanvas');
+            const container = canvas.parentElement;
+            const containerWidth = container.offsetWidth - 20;
+            
+            // Scale canvas to fit container while maintaining aspect ratio
+            const aspectRatio = canvasWidth / canvasHeight;
+            let displayWidth = containerWidth;
+            let displayHeight = displayWidth / aspectRatio;
+            
+            // Set CSS size for display
+            canvas.style.width = displayWidth + 'px';
+            canvas.style.height = displayHeight + 'px';
+            
+            // Set actual canvas size
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            
+            updateDesign();
+        }
+        
+        function setPresetBg(color) {
+            document.getElementById('bgColor').value = color;
+            updateDesign();
+        }
+        
+        function setCanvasSize(ratio) {
+            if (ratio === '4:3') {
+                canvasWidth = 800;
+                canvasHeight = 600;
+            } else if (ratio === '1:1') {
+                canvasWidth = 600;
+                canvasHeight = 600;
+            } else if (ratio === '16:9') {
+                canvasWidth = 900;
+                canvasHeight = 506;
+            }
+            updateCanvasSize();
+        }
+        
+        function setCustomCanvasSize() {
+            const width = parseInt(document.getElementById('customWidth').value);
+            const height = parseInt(document.getElementById('customHeight').value);
+            if (!width || !height || width < 100 || height < 100) {
+                alert('Please enter valid width and height (minimum 100px)');
+                return;
+            }
+            canvasWidth = width;
+            canvasHeight = height;
+            updateCanvasSize();
+        }
+        
+        function updateCanvasSize() {
+            const canvas = document.getElementById('designCanvas');
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            updateDesign();
+        }
+        
+        function setTextColor(color) {
+            document.getElementById('textColor').value = color;
+            updateDesign();
+        }
+        
+        function setTextAlign(align) {
+            if (textLayers[currentLayerIndex]) {
+                textLayers[currentLayerIndex].textAlign = align;
+                updateDesign();
+            }
+        }
+        
+        function updateFontSize(size) {
+            document.getElementById('sizeValue').textContent = size;
+            if (textLayers[currentLayerIndex]) {
+                textLayers[currentLayerIndex].fontSize = parseInt(size);
+                updateDesign();
+            }
+        }
+        
+        function updateShadow(blur) {
+            document.getElementById('shadowValue').textContent = blur;
+            if (textLayers[currentLayerIndex]) {
+                textLayers[currentLayerIndex].shadowBlur = parseInt(blur);
+                updateDesign();
+            }
+        }
+        
+        function addTextLayer() {
+            const newLayer = {
+                id: Date.now(),
+                text: 'New Text',
+                fontFamily: 'Arial',
+                fontSize: 36,
+                textColor: '#FFFFFF',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                x: 250,
+                y: 50 + (textLayers.length * 60),
+                shadowBlur: 5
+            };
+            textLayers.push(newLayer);
+            currentLayerIndex = textLayers.length - 1;
+            saveHistory();
+            renderTextLayers();
+            loadTextControls(currentLayerIndex);
+            updateDesign();
+        }
+        
+        function renderTextLayers() {
+            const container = document.getElementById('textLayersContainer');
+            container.innerHTML = textLayers.map((layer, idx) => `
+                <div class="text-layer-item ${idx === currentLayerIndex ? 'selected' : ''}" onclick="selectLayer(${idx})">
+                    <span>📝 ${layer.text.substring(0, 20)}${layer.text.length > 20 ? '...' : ''}</span>
+                    <button onclick="event.stopPropagation(); removeLayer(${idx});">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeLayer(idx) {
+            textLayers.splice(idx, 1);
+            if (textLayers.length > 0) {
+                currentLayerIndex = Math.min(currentLayerIndex, textLayers.length - 1);
+                loadTextControls(currentLayerIndex);
+            } else {
+                currentLayerIndex = -1;
+                document.getElementById('textControlsPanel').style.display = 'none';
+            }
+            saveHistory();
+            renderTextLayers();
+            updateDesign();
+        }
+        
+        function selectLayer(idx) {
+            currentLayerIndex = idx;
+            renderTextLayers();
+            loadTextControls(idx);
+        }
+        
+        function loadTextControls(idx) {
+            if (idx < 0 || !textLayers[idx]) {
+                document.getElementById('textControlsPanel').style.display = 'none';
+                return;
+            }
+            const layer = textLayers[idx];
+            document.getElementById('textControlsPanel').style.display = 'block';
+            document.getElementById('textInput').value = layer.text;
+            document.getElementById('fontFamily').value = layer.fontFamily;
+            document.getElementById('fontSize').value = layer.fontSize;
+            document.getElementById('sizeValue').textContent = layer.fontSize;
+            document.getElementById('textColor').value = layer.textColor;
+            document.getElementById('fontWeight').value = layer.fontWeight;
+            document.getElementById('shadowBlur').value = layer.shadowBlur;
+            document.getElementById('shadowValue').textContent = layer.shadowBlur;
+        }
+        
+        function removeCurrentTextLayer() {
+            removeLayer(currentLayerIndex);
+        }
+        
+        function handleImageUpload() {
+            const file = document.getElementById('bgImage').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    bgImage = new Image();
+                    bgImage.onload = () => updateDesign();
+                    bgImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function updateDesign() {
+            const layer = textLayers[currentLayerIndex];
+            if (layer) {
+                layer.text = document.getElementById('textInput').value;
+                layer.fontFamily = document.getElementById('fontFamily').value;
+                layer.fontSize = parseInt(document.getElementById('fontSize').value);
+                layer.textColor = document.getElementById('textColor').value;
+                layer.fontWeight = document.getElementById('fontWeight').value;
+                layer.shadowBlur = parseInt(document.getElementById('shadowBlur').value);
+            }
+            drawCanvas();
+        }
+        
+        function drawCanvas() {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const bgColor = document.getElementById('bgColor').value;
+            
+            // Clear canvas
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background image if exists
+            if (bgImage) {
+                ctx.globalAlpha = 0.4;
+                const ratio = canvas.height / bgImage.height;
+                ctx.drawImage(bgImage, 0, 0, bgImage.width * ratio, canvas.height);
+                ctx.globalAlpha = 1;
+            }
+            
+            // Draw text layers
+            textLayers.forEach((layer, idx) => {
+                ctx.font = `${layer.fontWeight} ${layer.fontSize}px ${layer.fontFamily}`;
+                ctx.fillStyle = layer.textColor;
+                ctx.textAlign = layer.textAlign || 'center';
+                
+                // Shadow effect
+                ctx.shadowColor = `rgba(0,0,0,${Math.min(layer.shadowBlur / 20, 1)})`;
+                ctx.shadowBlur = layer.shadowBlur;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+                
+                ctx.fillText(layer.text, layer.x, layer.y);
+                ctx.shadowColor = 'transparent';
+                
+                // Highlight selected layer
+                if (idx === currentLayerIndex) {
+                    ctx.strokeStyle = '#ff9800';
+                    ctx.lineWidth = 2;
+                    const metrics = ctx.measureText(layer.text);
+                    ctx.strokeRect(layer.x - metrics.width / 2 - 5, layer.y - layer.fontSize - 5, metrics.width + 10, layer.fontSize + 10);
+                }
+            });
+        }
+        
+        // Canvas click/drag handling
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('designCanvas');
+            if (canvas) {
+                canvas.addEventListener('mousedown', (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    for (let i = textLayers.length - 1; i >= 0; i--) {
+                        const layer = textLayers[i];
+                        const ctx = canvas.getContext('2d');
+                        ctx.font = `${layer.fontWeight} ${layer.fontSize}px ${layer.fontFamily}`;
+                        const metrics = ctx.measureText(layer.text);
+                        
+                        if (x > layer.x - metrics.width / 2 && x < layer.x + metrics.width / 2 &&
+                            y > layer.y - layer.fontSize && y < layer.y + 10) {
+                            selectLayer(i);
+                            isDragging = true;
+                            dragLayerIndex = i;
+                            return;
+                        }
+                    }
+                });
+                
+                canvas.addEventListener('mousemove', (e) => {
+                    if (isDragging && dragLayerIndex >= 0) {
+                        const rect = canvas.getBoundingClientRect();
+                        textLayers[dragLayerIndex].x = e.clientX - rect.left;
+                        textLayers[dragLayerIndex].y = e.clientY - rect.top;
+                        drawCanvas();
+                    }
+                });
+                
+                canvas.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    dragLayerIndex = -1;
+                    saveHistory();
+                });
+            }
+        });
+        
+        function saveHistory() {
+            history = [JSON.stringify(textLayers)];
+        }
+        
+        function undoDesign() {
+            if (history.length > 1) {
+                history.pop();
+                textLayers = JSON.parse(history[history.length - 1]);
+                currentLayerIndex = Math.min(currentLayerIndex, textLayers.length - 1);
+                renderTextLayers();
+                loadTextControls(currentLayerIndex);
+                updateDesign();
+            }
+        }
+        
+        function renderCalendar() {
+            const daysContainer = document.getElementById('calendarDays');
+            const monthYearSpan = document.getElementById('monthYear');
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            monthYearSpan.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            daysContainer.innerHTML = '';
+            for (let i = 0; i < firstDay; i++) daysContainer.innerHTML += '<div></div>';
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayBtn = document.createElement('button');
+                dayBtn.className = 'day';
+                dayBtn.textContent = day;
+                dayBtn.onclick = () => selectDate(dayBtn, day);
+                daysContainer.appendChild(dayBtn);
+            }
+        }
+        
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar();
+        }
+        
+        function selectDate(btn, day) {
+            document.querySelectorAll('.day').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedDate = `${day} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][currentMonth]} ${currentYear}`;
+            document.getElementById('summaryDate').textContent = selectedDate;
+        }
+        
+        function selectTime(btn, time) {
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedTime = time;
+            document.getElementById('summaryTime').textContent = time;
+            document.getElementById('selectedTimeDisplay').textContent = `Selected: ${time}`;
+        }
+        
+        function setCustomTime() {
+            const timeInput = document.getElementById('customTime').value;
+            if (!timeInput) {
+                alert('Please enter a time');
+                return;
+            }
+            const [hours, minutes] = timeInput.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            const customTime = `${displayHour}:${minutes} ${ampm}`;
+            
+            // Remove selection from preset buttons
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+            
+            selectedTime = customTime;
+            document.getElementById('summaryTime').textContent = customTime;
+            document.getElementById('selectedTimeDisplay').textContent = `Selected: ${customTime}`;
+        }
+        
+        function renderPackages() {
+            const container = document.getElementById('packagesContainer');
+            container.innerHTML = packages.map(pkg => `
+                <div class="package-card" onclick="selectPackage(this, '${pkg._id}', ${pkg.price}, '${pkg.name}')">
+                    <div class="package-name">🎭 ${pkg.name}</div>
+                    <div class="package-price">₹${pkg.price.toLocaleString()}</div>
+                    <ul class="package-features">
+                        ${pkg.features.map(f => `<li>✓ ${f}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+        
+        function selectPackage(card, id, price, name) {
+            document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedPackage = { id, price, name };
+            document.getElementById('summaryPackage').textContent = name;
+            document.getElementById('summaryPrice').textContent = `₹${price.toLocaleString()}`;
+        }
+        
+        function downloadDesign() {
+            if (!selectedPackage) {
+                alert('Please select a package first!');
+                return;
+            }
+            const canvas = document.getElementById('designCanvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'jokebazaar_design.png';
+            link.click();
+        }
+        
+        function confirmBooking() {
+            if (!selectedDate || !selectedTime || !selectedPackage) {
+                alert('Please select date, time, and package!');
+                return;
+            }
+            
+            const userData = localStorage.getItem('user');
+            if (!userData) {
+                alert('Please login first!');
+                window.location.href = 'index.htm';
+                return;
+            }
+            
+            const user = JSON.parse(userData);
+            const bookingId = 'BK' + Date.now();
+            const bookingDate = new Date().toLocaleDateString();
+            
+            const booking = {
+                bookingId,
+                userId: user.id,
+                venue: selectedVenueName,
+                date: selectedDate,
+                time: selectedTime,
+                package: selectedPackage.name,
+                price: selectedPackage.price,
+                bookingDate,
+                design: document.getElementById('designCanvas').toDataURL('image/png'),
+                status: 'Confirmed'
+            };
+            
+            let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            bookings.push(booking);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+            
+            const successMsg = document.getElementById('successMsg');
+            successMsg.textContent = '✅ Booking Confirmed!';
+            successMsg.style.display = 'block';
+            window.scrollTo(0, 0);
+            setTimeout(() => { window.location.href = 'index.htm'; }, 2000);
+        }
+        
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
